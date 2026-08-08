@@ -21,7 +21,7 @@ class StressLLM:
     """
 
     def __init__(self, model_name: str):
-        dir = importlib.resources.files('stress')
+        dir = importlib.resources.files(__package__)
         with (dir.joinpath('stresses-nohomographs.json').open('r', encoding='utf-8') as json_file):
             self._stresses_nohomographs = json.load(json_file)
         with (dir.joinpath('stresses-grammar.json').open('r', encoding='utf-8') as json_file):

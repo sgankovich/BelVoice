@@ -5,7 +5,7 @@ import re
 
 class StressStat:
     def __init__(self):
-        dir = importlib.resources.files('stress')
+        dir = importlib.resources.files(__package__)
         with (dir.joinpath('stresses-nohomographs.json').open('r', encoding='utf-8') as json_file):
             self._stresses_nohomographs = json.load(json_file)
         with (dir.joinpath('stresses-stat.json').open('r', encoding='utf-8') as json_file):
@@ -33,7 +33,7 @@ class StressStat:
             elif part_lower in self._stresses_stat:
                 parts[i] = self._stresses_stat[part_lower]
 
-        return "".join(result_parts)
+        return "".join(parts)
 
     def process_word(self, word: str) -> str:
         return self._stresses_stat.get(word, self._stresses_stat.get(word.lower(), None))
