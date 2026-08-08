@@ -77,11 +77,13 @@ class STTGemini:
     }
 
     def __init__(self, model_name: str, prompt: str = None,
-                 thinking_level: Optional[Literal["none", "minimal", "low", "medium", "high"]] = "none") -> None:
+                 thinking_level: Optional[Literal["none", "minimal", "low", "medium", "high"]] = "none",
+                 api_key: str = None) -> None:
         if not model_name.startswith("gemini/"):
             raise Exception(
                 f"{model_name} - не мадэль Gemini. Падтрымліваюцца толькі Gemini каб мець магчымасць запампаваць файл на Google для распазнавання.")
-        if os.environ.get("GEMINI_API_KEY") is None:
+        self._api_key = api_key or os.environ.get("GEMINI_API_KEY")
+        if self._api_key is None:
             raise Exception("Памылка: не ўстаноўлены GEMINI_API_KEY у якасці зменнай асяроддзя.")
 
         self._model_name = model_name
@@ -150,7 +152,8 @@ class STTGemini:
             i += len(replace_segments)
 
     def _transcript_file(self, temp_file: str, prompt: str, response_format: str):
-        audio_file = litellm.create_file(file=temp_file, custom_llm_provider="gemini", purpose="user_data")
+        audio_file = litellm.create_file(file=temp_file, custom_llm_provider="gemini", purpose="user_data",
+                                           api_key=self._api_key)
         audio_file_extension = Path(temp_file).suffix.lstrip('.')
 
         response = litellm.completion(
@@ -167,10 +170,11 @@ class STTGemini:
             }],
             temperature=0.0,
             thinking_level=self._thinking_level,
-            response_format=response_format
+            response_format=response_format,
+            api_key=self._api_key
         )
 
-        litellm.file_delete(audio_file.id, custom_llm_provider="gemini")
+        litellm.file_delete(audio_file.id, custom_llm_provider="gemini", api_key=self._api_key)
         return response
 
     def _convert_transcript_to_segments(self, source_segment: VoicePart, transcript: str) -> list[VoicePart]:

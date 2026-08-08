@@ -56,22 +56,21 @@ def save_config(config):
         json.dump(safe, f, ensure_ascii=False, indent=2)
 
 
-def env_or_value(key, value):
-    if value:
-        os.environ[key] = value
-    return os.environ.get(key)
+def resolve_secret(key, value):
+    """Вяртае перададзены ключ, інакш значэнне з пераменнай асяроддзя."""
+    return value or os.environ.get(key)
 
 
 def get_llm_args(provider, config):
     if provider == "mistral":
         return {
             "model_name": config["mistral_chat_model"] or DEFAULT_CONFIG["mistral_chat_model"],
-            "api_key": env_or_value("MISTRAL_API_KEY", config["mistral_api_key"].strip()),
+            "api_key": resolve_secret("MISTRAL_API_KEY", config["mistral_api_key"].strip()),
         }
     if provider == "openrouter":
         return {
             "model_name": config["openrouter_chat_model"] or DEFAULT_CONFIG["openrouter_chat_model"],
-            "api_key": env_or_value("OPENROUTER_API_KEY", config["openrouter_api_key"].strip()),
+            "api_key": resolve_secret("OPENROUTER_API_KEY", config["openrouter_api_key"].strip()),
         }
     if provider == "lmstudio":
         return {
@@ -82,7 +81,7 @@ def get_llm_args(provider, config):
     if provider == "gemini":
         return {
             "model_name": config["gemini_model"] or DEFAULT_CONFIG["gemini_model"],
-            "api_key": env_or_value("GEMINI_API_KEY", config["gemini_api_key"].strip()),
+            "api_key": resolve_secret("GEMINI_API_KEY", config["gemini_api_key"].strip()),
         }
     return None
 
@@ -128,12 +127,12 @@ def synthesize(text, provider, config, output_path: str):
     elif provider == "mistral":
         from belvoice.synth.tts.TTSMistral import TTSMistral
         model = config["mistral_tts_model"] or DEFAULT_CONFIG["mistral_tts_model"]
-        api_key = env_or_value("MISTRAL_API_KEY", config["mistral_api_key"].strip())
+        api_key = resolve_secret("MISTRAL_API_KEY", config["mistral_api_key"].strip())
         TTSMistral(model_name=model, api_key=api_key).tts(text, output_path)
     elif provider == "openrouter":
         from belvoice.synth.tts.TTSOpenRouter import TTSOpenRouter
         model = config["openrouter_tts_model"] or DEFAULT_CONFIG["openrouter_tts_model"]
-        api_key = env_or_value("OPENROUTER_API_KEY", config["openrouter_api_key"].strip())
+        api_key = resolve_secret("OPENROUTER_API_KEY", config["openrouter_api_key"].strip())
         TTSOpenRouter(model_name=model, api_key=api_key).tts(text, output_path)
     else:
         raise ValueError(f"Невядомы TTS-правайдэр: {provider}")
@@ -142,14 +141,14 @@ def synthesize(text, provider, config, output_path: str):
 def transcribe(audio_path, provider, config):
     if provider == "gemini":
         from belvoice.asr.stt.STTGemini import STTGemini
-        env_or_value("GEMINI_API_KEY", config["gemini_api_key"].strip())
         model = config["gemini_model"] or DEFAULT_CONFIG["gemini_model"]
-        return STTGemini(model).transcript_file(audio_path)
+        api_key = resolve_secret("GEMINI_API_KEY", config["gemini_api_key"].strip())
+        return STTGemini(model, api_key=api_key).transcript_file(audio_path)
     if provider == "openai":
         from belvoice.asr.stt.STTOpenAI import STTOpenAI
         model = config["openai_model"] or DEFAULT_CONFIG["openai_model"]
         api_base = config["openai_base_url"] or DEFAULT_CONFIG["openai_base_url"]
-        api_key = env_or_value("OPENAI_API_KEY", config["openai_api_key"].strip()) or "lm-studio"
+        api_key = resolve_secret("OPENAI_API_KEY", config["openai_api_key"].strip()) or "lm-studio"
         return STTOpenAI(model_name=model, api_base=api_base, api_key=api_key).transcribe(audio_path)
     raise ValueError(f"Невядомы ASR-правайдэр: {provider}")
 
@@ -241,7 +240,6 @@ def run_pipeline(params):
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    config = load_config()
     result = None
     error = None
 
@@ -252,6 +250,8 @@ def index():
             error = str(exc)
             app.logger.exception("Памылка апрацоўкі")
 
+    # Перазагружаем канфіг пасля POST, каб форма паказвала захаваныя значэнні
+    config = load_config()
     return render_template("index.html", config=config, result=result, error=error)
 
 
