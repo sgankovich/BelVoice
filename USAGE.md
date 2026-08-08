@@ -520,3 +520,29 @@ print(asr.transcribe("test.wav", language="be"))
 | `OPENAI_API_BASE` | Базавы URL для `STTOpenAI` | `STTOpenAI` |
 | `OPENAI_API_KEY` | Ключ для OpenAI-сумяшчальнага endpoint | `STTOpenAI` |
 | `LMSTUDIO_BASE_URL` | Базавы URL для роднага LMStudio endpoint | `NormalizationLLM`, `StressLLM` |
+
+---
+
+## 11. Тэставы Web UI
+
+Каталог `webui/` утрымлівае аднастронкавае Flask-прыкладанне для тэставання ўсіх рэжымаў.
+
+### Запуск
+
+```bash
+pip install -e ".[webui]"   # альбо pip install flask
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+export PYTHONPATH=framework
+python webui/app.py
+```
+
+Адкрыйце `http://localhost:5000` у браузеры.
+
+### Магчымасці
+- Наладка токенаў і мадэляў для Mistral, OpenRouter, LMStudio, Gemini і OpenAI-сумяшчальнага ASR.
+- Рэжымы: **TTS-пайплайн**, **ASR**, **Нармалізацыя**, **Натцiскі**, **Фанемізацыя**.
+- TTS-пайплайн дазваляе паслядоўна выбраць правайдэра для нармалізацыі, націскаў, фанемізацыі і сінтэзу.
+- Падтрымка воблачных мадэляў (Mistral Voxtral, OpenRouter/Gemini TTS) і лакальных (LMStudio, CoquiTTS).
+- Выніковыя аўдыяфайлы захоўваюцца ў `webui/static/outputs/` і прайграюцца ў браузеры.
+
+> Нататка: канфігурацыя (токены, base URL, мадэлі) захоўваецца ў `webui/ui_config.json` на дыску, таму не дабаўляйце яго ў git.

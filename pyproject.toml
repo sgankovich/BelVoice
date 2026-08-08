@@ -16,6 +16,7 @@ classifiers = [
 license = {file = "LICENSE.md"}
 
 [project.optional-dependencies]
+webui = ["flask>=3.0"]
 
 [tool.setuptools.package-data]
 "*" = ["**/*.json", "**/*.wav"]
