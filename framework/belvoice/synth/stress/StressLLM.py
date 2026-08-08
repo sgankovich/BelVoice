@@ -2,7 +2,7 @@ import importlib.resources
 import json
 import re
 
-from belvoice.llm_client import LiteLLMClient
+from belvoice.llm_client import make_client
 
 
 class StressLLM:
@@ -26,7 +26,7 @@ class StressLLM:
             self._stresses_nohomographs = json.load(json_file)
         with (dir.joinpath('stresses-grammar.json').open('r', encoding='utf-8') as json_file):
             self._stresses_grammar = json.load(json_file)
-        self._client = LiteLLMClient(model_name, api_key=api_key, api_base=api_base)
+        self._client = make_client(model_name, api_key=api_key, api_base=api_base)
 
     def apply_stresses(self, text: str) -> str:
         word_pattern = r'([ёйцукенгшўзхфывапролджэячсмітьбю\u02BC\u0301]+)'

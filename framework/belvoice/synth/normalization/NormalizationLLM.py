@@ -1,4 +1,4 @@
-from belvoice.llm_client import LiteLLMClient
+from belvoice.llm_client import make_client
 
 
 class NormalizationLLM:
@@ -55,7 +55,7 @@ class NormalizationLLM:
     """
 
     def __init__(self, model_name: str, api_key: str = None, api_base: str = None):
-        self._client = LiteLLMClient(model_name, api_key=api_key, api_base=api_base)
+        self._client = make_client(model_name, api_key=api_key, api_base=api_base)
 
     def normalize(self, text_to_normalize: str) -> str:
         messages = [

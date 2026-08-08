@@ -486,7 +486,13 @@ stress = StressLLM("mistral/mistral-small-latest")
 # OpenRouter
 normalizer = NormalizationLLM("openrouter/mistralai/mistral-small-3.1-24b-instruct")
 
-# LMStudio (лакальны сервер OpenAI-сумяшчальны)
+# LMStudio родны endpoint /api/v1/chat
+normalizer = NormalizationLLM(
+    "qwen/qwen3.6-35b-a3b",
+    api_base="http://localhost:1234/api/v1",
+)
+
+# LMStudio OpenAI-сумяшчальны endpoint /v1/chat/completions
 normalizer = NormalizationLLM(
     "openai/loaded-model",
     api_base="http://localhost:1234/v1",
@@ -513,3 +519,4 @@ print(asr.transcribe("test.wav", language="be"))
 | `OPENROUTER_API_KEY` | Ключ OpenRouter | `TTSOpenRouter`, `NormalizationLLM`, `StressLLM` |
 | `OPENAI_API_BASE` | Базавы URL для `STTOpenAI` | `STTOpenAI` |
 | `OPENAI_API_KEY` | Ключ для OpenAI-сумяшчальнага endpoint | `STTOpenAI` |
+| `LMSTUDIO_BASE_URL` | Базавы URL для роднага LMStudio endpoint | `NormalizationLLM`, `StressLLM` |
