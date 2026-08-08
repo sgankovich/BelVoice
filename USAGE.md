@@ -438,3 +438,78 @@ python your_script.py
 - **Памылкі ладу PyTorch на Python 3.14** — перайдзіце на Python 3.12.
 - **Памылкі з `mps`** — `export TORCH_DEVICE=cpu`.
 - **`GEMINI_API_KEY`** не ўстаноўлены — `STTGemini`, `NormalizationLLM`, `StressLLM` не запусцяцца без яго.
+
+---
+
+## 10. Mistral, OpenRouter і LMStudio
+
+### 10.1. TTS праз Mistral (`TTSMistral`)
+
+Патрабуецца `MISTRAL_API_KEY`.
+
+```python
+from belvoice.synth.tts.TTSMistral import TTSMistral
+
+tts = TTSMistral()
+tts.tts("Hello world!", "out-mistral.mp3")
+```
+
+- Мадэль: `voxtral-mini-tts-2603` (перадвызначаная).
+- Голас выбіраецца аўтаматычна са спісу preset галасоў, калі не пазначаны `voice_id`.
+- Доўгі тэкст разбіваецца на часткі і складаецца ў адзін файл праз ffmpeg.
+
+### 10.2. TTS праз OpenRouter (`TTSOpenRouter`)
+
+Патрабуецца `OPENROUTER_API_KEY`. Выкарыстоўвае мадэль `google/gemini-3.1-flash-tts-preview`.
+
+```python
+from belvoice.synth.tts.TTSOpenRouter import TTSOpenRouter
+
+tts = TTSOpenRouter()
+tts.tts("Прывітанне, свет!", "out-openrouter.wav")
+```
+
+- API вяртае raw PCM (24 kHz, 16-bit, mono), які канвертуецца ў патрэбны фармат праз ffmpeg.
+
+### 10.3. LLM-модулі праз Mistral/OpenRouter/LMStudio
+
+`NormalizationLLM` і `StressLLM` цяпер прымаюць `api_key` і `api_base`:
+
+```python
+from belvoice.synth.normalization.NormalizationLLM import NormalizationLLM
+from belvoice.synth.stress.StressLLM import StressLLM
+
+# Mistral
+normalizer = NormalizationLLM("mistral/mistral-small-latest")
+stress = StressLLM("mistral/mistral-small-latest")
+
+# OpenRouter
+normalizer = NormalizationLLM("openrouter/mistralai/mistral-small-3.1-24b-instruct")
+
+# LMStudio (лакальны сервер OpenAI-сумяшчальны)
+normalizer = NormalizationLLM(
+    "openai/loaded-model",
+    api_base="http://localhost:1234/v1",
+    api_key="lm-studio",
+)
+```
+
+### 10.4. ASR праз LMStudio (`STTOpenAI`)
+
+Калі ў LMStudio загружаная мадэль Whisper і ўключаны сервер:
+
+```python
+from belvoice.asr.stt.STTOpenAI import STTOpenAI
+
+asr = STTOpenAI()  # http://localhost:1234/v1
+print(asr.transcribe("test.wav", language="be"))
+```
+
+### 10.5. Патрэбныя пераменныя асяроддзя
+
+| Пераменная | Прызначэнне | Выкарыстоўваецца ў |
+|---|---|---|
+| `MISTRAL_API_KEY` | Ключ Mistral | `TTSMistral`, `NormalizationLLM`, `StressLLM` |
+| `OPENROUTER_API_KEY` | Ключ OpenRouter | `TTSOpenRouter`, `NormalizationLLM`, `StressLLM` |
+| `OPENAI_API_BASE` | Базавы URL для `STTOpenAI` | `STTOpenAI` |
+| `OPENAI_API_KEY` | Ключ для OpenAI-сумяшчальнага endpoint | `STTOpenAI` |
