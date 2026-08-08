@@ -1,0 +1,124 @@
+{% from "icons.html" import icon %}
+<!DOCTYPE html>
+<html lang="{{ ui_language }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% set page_title = title|default('home') %}
+    <title>{{ ui.get(page_title, page_title) }} | {{ ui.brand_title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+    <script>
+        (function () {
+            var root = document.documentElement;
+            var mode = localStorage.getItem('app-mode') || 'dark';
+            var style = localStorage.getItem('app-style') || 'modern';
+            var accent = localStorage.getItem('app-accent') || 'lime';
+            root.setAttribute('data-mode', mode);
+            root.setAttribute('data-style', style);
+            root.setAttribute('data-accent', accent);
+        })();
+    </script>
+</head>
+<body>
+<div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="{{ ui.sidebar }}">
+        <div class="sidebar-header">
+            <div class="logo-mark">{{ icon('activity', 18) }}</div>
+            <div>
+                <div class="brand-title">{{ ui.brand_title }}</div>
+                <div class="brand-sub">{{ ui.brand_sub }}</div>
+            </div>
+        </div>
+        <nav class="nav-section" aria-label="{{ ui.main_nav }}">
+            <div class="nav-title">{{ ui.menu }}</div>
+            <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+                {{ icon('layout-dashboard', 20) }} {{ ui.home }}
+            </a>
+            <a class="nav-link" href="https://github.com/sgankovich/BelVoice" target="_blank" rel="noopener">
+                {{ icon('box', 20) }} GitHub
+            </a>
+        </nav>
+    </aside>
+    <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
+
+    <header class="topbar">
+        <button type="button" class="menu-btn" id="menu-btn" aria-label="{{ ui.open_menu }}" aria-expanded="false">
+            {{ icon('menu', 20) }}
+        </button>
+        <nav class="breadcrumbs" aria-label="{{ ui.breadcrumbs }}">
+            <span class="crumb-muted">{{ ui.brand_title }}</span>
+            {{ icon('chevron-right', 16, 'crumb-muted') }}
+            <span>{{ ui.get(page_title, page_title) }}</span>
+        </nav>
+        <div class="search" role="button" id="search-trigger" tabindex="0" aria-label="{{ ui.open_command_palette }}">
+            <span class="search-icon">{{ icon('search', 16) }}</span>
+            <input class="search-field" type="text" placeholder="{{ ui.search }}" aria-label="{{ ui.search }}" readonly>
+            <span class="search-kbd">⌘K</span>
+        </div>
+        <div class="topbar-actions">
+            <form class="lang-toggle" method="POST" action="{{ url_for('set_ui_language') }}" aria-label="{{ ui.ui_language }}">
+                <button type="submit" name="lang" value="en" class="lang-btn {% if ui_language == 'en' %}active{% endif %}" aria-pressed="{{ 'true' if ui_language == 'en' else 'false' }}">EN</button>
+                <button type="submit" name="lang" value="be" class="lang-btn {% if ui_language == 'be' %}active{% endif %}" aria-pressed="{{ 'true' if ui_language == 'be' else 'false' }}">BY</button>
+            </form>
+            <button type="button" class="icon-btn" id="mode-toggle" aria-label="{{ ui.toggle_day_night }}">
+                {{ icon('moon', 20, 'mode-icon') }}
+            </button>
+            <button type="button" class="icon-btn" id="style-toggle" aria-label="{{ ui.toggle_modern_simple }}">
+                {{ icon('layout-dashboard', 20, 'style-icon') }}
+            </button>
+            <select class="accent-select" id="accent-select" aria-label="{{ ui.choose_accent_color }}">
+                <option value="lime">{{ ui.accent_lime }}</option>
+                <option value="coral">{{ ui.accent_coral }}</option>
+                <option value="purple">{{ ui.accent_purple }}</option>
+                <option value="blue">{{ ui.accent_blue }}</option>
+                <option value="amber">{{ ui.accent_amber }}</option>
+                <option value="pink">{{ ui.accent_pink }}</option>
+                <option value="teal">{{ ui.accent_teal }}</option>
+            </select>
+        </div>
+    </header>
+
+    <main class="main" id="main">
+        <div class="page">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">
+                            {{ icon('check' if category != 'error' else 'x', 18) }}
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</div>
+
+<div class="cp-overlay" id="cp-overlay" aria-hidden="true"></div>
+<div class="cp-dialog" id="cp-dialog" role="dialog" aria-modal="true" aria-label="{{ ui.command_palette }}">
+    <div class="cp-search">
+        {{ icon('search', 18) }}
+        <input class="cp-input" id="cp-input" type="text" placeholder="{{ ui.cp_placeholder }}" autocomplete="off" aria-label="{{ ui.command_palette_input }}">
+    </div>
+    <div class="cp-list" id="cp-list" role="listbox" aria-label="{{ ui.command_palette }}"></div>
+</div>
+
+<script>
+    window.UI_TEXT = {{ ui|tojson }};
+    window.UI_COMMANDS = [
+        { name: {{ ui.command_home|tojson }}, icon: 'layout-dashboard', href: {{ url_for('index')|tojson }}, shortcut: 'G H' },
+        { name: {{ ui.command_tts|tojson }}, icon: 'headphones', action: 'focus-tts', shortcut: 'M T' },
+        { name: {{ ui.command_asr|tojson }}, icon: 'mic', action: 'focus-asr', shortcut: 'M A' },
+        { name: {{ ui.command_normalization|tojson }}, icon: 'type', action: 'focus-normalization', shortcut: 'M N' },
+        { name: {{ ui.command_stress|tojson }}, icon: 'sparkles', action: 'focus-stress', shortcut: 'M S' },
+        { name: {{ ui.command_phonemization|tojson }}, icon: 'zap', action: 'focus-phonemization', shortcut: 'M P' },
+        { name: {{ ui.toggle_day_night|tojson }}, icon: 'moon', action: 'mode', shortcut: 'T M' },
+        { name: {{ ui.toggle_modern_simple|tojson }}, icon: 'layout-dashboard', action: 'style', shortcut: 'T S' }
+    ];
+</script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

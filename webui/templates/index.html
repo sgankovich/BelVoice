@@ -1,338 +1,319 @@
-<!doctype html>
-<html lang="be">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BelVoice — Тэставы UI</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --vellum-bg: #f7f6f3;
-      --vellum-surface: #ffffff;
-      --vellum-surface-2: #f2f1ed;
-      --vellum-border: #e6e4df;
-      --vellum-text: #1a1d23;
-      --vellum-text-muted: #6f7682;
-      --vellum-lime: #b4f03e;
-      --vellum-coral: #ff7a5c;
-      --vellum-purple: #8b5cf6;
-      --vellum-blue: #38bdf8;
-      --radius: 16px;
-      --shadow: 0 6px 18px rgba(0,0,0,0.06);
-      --ease: cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: 'DM Sans', 'Manrope', system-ui, sans-serif;
-      background: var(--vellum-bg);
-      color: var(--vellum-text);
-      line-height: 1.45;
-    }
-    .page { max-width: 1180px; margin: 0 auto; padding: 2rem 1.5rem; }
-    header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-    .logo {
-      width: 44px; height: 44px; border-radius: 12px;
-      background: var(--vellum-text); color: var(--vellum-lime);
-      display: grid; place-items: center; font-weight: 700; font-size: 1.1rem;
-    }
-    h1 { font-family: 'Manrope', sans-serif; font-size: 1.6rem; margin: 0; }
-    .subtitle { color: var(--vellum-text-muted); margin-top: .25rem; }
-    .card {
-      background: var(--vellum-surface);
-      border: 1px solid var(--vellum-border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 1.5rem;
-      margin-bottom: 1.25rem;
-    }
-    .card h2 { font-family: 'Manrope', sans-serif; font-size: 1.15rem; margin: 0 0 1rem; }
-    .mode-select { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
-    .mode-select label {
-      cursor: pointer; padding: .6rem 1rem; border-radius: 999px;
-      border: 1px solid var(--vellum-border); background: var(--vellum-surface-2);
-      font-weight: 500; transition: transform .15s var(--ease), background .15s var(--ease);
-    }
-    .mode-select input { position: absolute; opacity: 0; }
-    .mode-select input:checked + label { background: var(--vellum-text); color: var(--vellum-lime); border-color: var(--vellum-text); }
-    .mode-select label:hover { transform: translateY(-1px); }
+{% extends "base.html" %}
+{% from "icons.html" import icon %}
 
-    .grid { display: grid; gap: 1.25rem; }
-    @media (min-width: 900px) { .grid.cols-2 { grid-template-columns: repeat(2, 1fr); } }
+{% block content %}
+<div class="page-header">
+    <h1>{{ ui.home }}</h1>
+    <p>{{ ui.home_sub }}</p>
+</div>
 
-    label { display: block; font-size: .85rem; font-weight: 600; color: var(--vellum-text-muted); margin-bottom: .35rem; font-family: 'DM Mono', monospace; }
-    input[type="text"], input[type="password"], input[type="file"], select, textarea {
-      width: 100%;
-      padding: .65rem .75rem;
-      border: 1px solid var(--vellum-border);
-      border-radius: 10px;
-      background: var(--vellum-surface-2);
-      color: var(--vellum-text);
-      font: inherit;
-      outline: none;
-      transition: border-color .15s var(--ease), box-shadow .15s var(--ease);
-    }
-    input:focus, select:focus, textarea:focus { border-color: var(--vellum-purple); box-shadow: 0 0 0 3px rgba(139,92,246,.12); }
-    textarea { min-height: 120px; resize: vertical; }
-    .hint { font-size: .8rem; color: var(--vellum-text-muted); margin-top: .25rem; }
+{% if error %}
+<div class="flash error">
+    {{ icon('x', 18) }}
+    {{ error }}
+</div>
+{% endif %}
 
-    .config-group { border: 1px solid var(--vellum-border); border-radius: 12px; padding: 1rem; }
-    .config-group h3 { margin: 0 0 .75rem; font-size: 1rem; font-family: 'Manrope', sans-serif; }
-
-    .row { display: grid; gap: .75rem; }
-    @media (min-width: 700px) { .row.cols-2 { grid-template-columns: repeat(2, 1fr); } }
-
-    button {
-      display: inline-flex; align-items: center; gap: .5rem;
-      padding: .85rem 1.5rem; border: 0; border-radius: 12px;
-      background: var(--vellum-text); color: var(--vellum-lime);
-      font: inherit; font-weight: 700; cursor: pointer;
-      transition: transform .15s var(--ease), filter .15s var(--ease);
-    }
-    button:hover { transform: translateY(-1px); filter: brightness(1.08); }
-    button.secondary { background: var(--vellum-surface-2); color: var(--vellum-text); border: 1px solid var(--vellum-border); }
-
-    .error { background: #fff0ed; border: 1px solid #ffd4cd; color: #9e2b1a; padding: 1rem; border-radius: 12px; margin-bottom: 1rem; }
-    .result { background: #f6fee8; border: 1px solid #d9f2b2; padding: 1.25rem; border-radius: 12px; }
-    .result h3 { margin-top: 0; font-size: 1rem; }
-    .result audio { width: 100%; margin-top: .75rem; }
-    .result pre { background: rgba(0,0,0,.03); padding: .75rem; border-radius: 10px; overflow: auto; font-family: 'DM Mono', monospace; font-size: .9rem; white-space: pre-wrap; }
-    .steps { list-style: none; padding: 0; margin: 1rem 0 0; }
-    .steps li { display: flex; gap: .75rem; padding: .5rem 0; border-bottom: 1px dashed var(--vellum-border); }
-    .steps li:last-child { border-bottom: 0; }
-    .steps strong { min-width: 110px; color: var(--vellum-text-muted); font-size: .8rem; }
-    .steps code { background: rgba(0,0,0,.03); padding: .15rem .4rem; border-radius: 6px; }
-
-    .section { display: none; }
-    .section.active { display: block; }
-  </style>
-</head>
-<body>
-<div class="page">
-  <header>
-    <div class="logo">BV</div>
-    <div>
-      <h1>BelVoice — Тэставы UI</h1>
-      <div class="subtitle">Канфігурацыя правайдэраў, рэжымаў і генерацыя голасу / распазнаванне</div>
-    </div>
-  </header>
-
-  {% if error %}
-  <div class="error">{{ error }}</div>
-  {% endif %}
-
-  <form method="post" enctype="multipart/form-data" action="/" id="main-form">
+<form method="post" enctype="multipart/form-data" action="{{ url_for('index') }}" id="main-form">
     <div class="card">
-      <h2>1. Рэжым</h2>
-      <div class="mode-select" id="mode-select">
-        <input type="radio" name="mode" id="mode-tts" value="tts" {% if request.form.get('mode','tts')=='tts' %}checked{% endif %}>
-        <label for="mode-tts">TTS-пайплайн</label>
+        <div class="card-header">
+            <div>
+                <div class="card-title">{{ ui.mode }}</div>
+                <div class="card-sub">{{ ui.mode_sub }}</div>
+            </div>
+            {{ icon('command', 22) }}
+        </div>
+        <div class="mode-select" id="mode-select">
+            <input type="radio" name="mode" id="mode-tts" value="tts" {% if request.form.get('mode','tts')=='tts' %}checked{% endif %}>
+            <label for="mode-tts">{{ icon('headphones', 16) }} {{ ui.tts_pipeline }}</label>
 
-        <input type="radio" name="mode" id="mode-asr" value="asr" {% if request.form.get('mode','')=='asr' %}checked{% endif %}>
-        <label for="mode-asr">ASR</label>
+            <input type="radio" name="mode" id="mode-asr" value="asr" {% if request.form.get('mode','')=='asr' %}checked{% endif %}>
+            <label for="mode-asr">{{ icon('mic', 16) }} {{ ui.asr }}</label>
 
-        <input type="radio" name="mode" id="mode-normalization" value="normalization" {% if request.form.get('mode','')=='normalization' %}checked{% endif %}>
-        <label for="mode-normalization">Нармалізацыя</label>
+            <input type="radio" name="mode" id="mode-normalization" value="normalization" {% if request.form.get('mode','')=='normalization' %}checked{% endif %}>
+            <label for="mode-normalization">{{ icon('type', 16) }} {{ ui.normalization }}</label>
 
-        <input type="radio" name="mode" id="mode-stress" value="stress" {% if request.form.get('mode','')=='stress' %}checked{% endif %}>
-        <label for="mode-stress">Натцiскі</label>
+            <input type="radio" name="mode" id="mode-stress" value="stress" {% if request.form.get('mode','')=='stress' %}checked{% endif %}>
+            <label for="mode-stress">{{ icon('sparkles', 16) }} {{ ui.stress }}</label>
 
-        <input type="radio" name="mode" id="mode-phonemization" value="phonemization" {% if request.form.get('mode','')=='phonemization' %}checked{% endif %}>
-        <label for="mode-phonemization">Фанемізацыя</label>
-      </div>
+            <input type="radio" name="mode" id="mode-phonemization" value="phonemization" {% if request.form.get('mode','')=='phonemization' %}checked{% endif %}>
+            <label for="mode-phonemization">{{ icon('zap', 16) }} {{ ui.phonemization }}</label>
+        </div>
     </div>
 
     <div class="card">
-      <h2>2. Канфігурацыя правайдэраў</h2>
-      <div class="grid cols-2">
-        <div class="config-group">
-          <h3>Mistral</h3>
-          <div class="row">
-            <div><label for="mistral_api_key">API key</label><input type="password" name="mistral_api_key" id="mistral_api_key" value="{{ config.mistral_api_key }}"></div>
-            <div><label for="mistral_chat_model">Chat-мадэль</label><input type="text" name="mistral_chat_model" id="mistral_chat_model" value="{{ config.mistral_chat_model }}"></div>
-            <div><label for="mistral_tts_model">TTS-мадэль</label><input type="text" name="mistral_tts_model" id="mistral_tts_model" value="{{ config.mistral_tts_model }}"></div>
-          </div>
+        <div class="card-header">
+            <div>
+                <div class="card-title">{{ ui.config_providers }}</div>
+                <div class="card-sub">{{ ui.config_providers_sub }}</div>
+            </div>
+            {{ icon('settings', 22) }}
         </div>
+        <div class="config-grid">
+            <div class="config-group">
+                <h3>Mistral</h3>
+                <div class="row">
+                    <div class="field">
+                        <label for="mistral_api_key">{{ ui.api_key }}</label>
+                        <input type="password" name="mistral_api_key" id="mistral_api_key" class="v-input" value="{{ config.mistral_api_key }}">
+                    </div>
+                    <div class="field">
+                        <label for="mistral_chat_model">{{ ui.chat_model }}</label>
+                        <input type="text" name="mistral_chat_model" id="mistral_chat_model" class="v-input" value="{{ config.mistral_chat_model }}">
+                    </div>
+                    <div class="field">
+                        <label for="mistral_tts_model">{{ ui.tts_model }}</label>
+                        <input type="text" name="mistral_tts_model" id="mistral_tts_model" class="v-input" value="{{ config.mistral_tts_model }}">
+                    </div>
+                </div>
+            </div>
 
-        <div class="config-group">
-          <h3>OpenRouter</h3>
-          <div class="row">
-            <div><label for="openrouter_api_key">API key</label><input type="password" name="openrouter_api_key" id="openrouter_api_key" value="{{ config.openrouter_api_key }}"></div>
-            <div><label for="openrouter_chat_model">Chat-мадэль</label><input type="text" name="openrouter_chat_model" id="openrouter_chat_model" value="{{ config.openrouter_chat_model }}"></div>
-            <div><label for="openrouter_tts_model">TTS-мадэль</label><input type="text" name="openrouter_tts_model" id="openrouter_tts_model" value="{{ config.openrouter_tts_model }}"></div>
-          </div>
-        </div>
+            <div class="config-group">
+                <h3>OpenRouter</h3>
+                <div class="row">
+                    <div class="field">
+                        <label for="openrouter_api_key">{{ ui.api_key }}</label>
+                        <input type="password" name="openrouter_api_key" id="openrouter_api_key" class="v-input" value="{{ config.openrouter_api_key }}">
+                    </div>
+                    <div class="field">
+                        <label for="openrouter_chat_model">{{ ui.chat_model }}</label>
+                        <input type="text" name="openrouter_chat_model" id="openrouter_chat_model" class="v-input" value="{{ config.openrouter_chat_model }}">
+                    </div>
+                    <div class="field">
+                        <label for="openrouter_tts_model">{{ ui.tts_model }}</label>
+                        <input type="text" name="openrouter_tts_model" id="openrouter_tts_model" class="v-input" value="{{ config.openrouter_tts_model }}">
+                    </div>
+                </div>
+            </div>
 
-        <div class="config-group">
-          <h3>LMStudio</h3>
-          <div class="row">
-            <div><label for="lmstudio_base_url">Base URL</label><input type="text" name="lmstudio_base_url" id="lmstudio_base_url" value="{{ config.lmstudio_base_url }}"></div>
-            <div><label for="lmstudio_model">Мадэль</label><input type="text" name="lmstudio_model" id="lmstudio_model" value="{{ config.lmstudio_model }}"></div>
-            <div><label for="lmstudio_api_key">API key (неабавязкова)</label><input type="password" name="lmstudio_api_key" id="lmstudio_api_key" value="{{ config.lmstudio_api_key }}"></div>
-          </div>
-        </div>
+            <div class="config-group">
+                <h3>LMStudio</h3>
+                <div class="row">
+                    <div class="field">
+                        <label for="lmstudio_base_url">{{ ui.base_url }}</label>
+                        <input type="text" name="lmstudio_base_url" id="lmstudio_base_url" class="v-input" value="{{ config.lmstudio_base_url }}">
+                    </div>
+                    <div class="field">
+                        <label for="lmstudio_model">{{ ui.model }}</label>
+                        <input type="text" name="lmstudio_model" id="lmstudio_model" class="v-input" value="{{ config.lmstudio_model }}">
+                    </div>
+                    <div class="field">
+                        <label for="lmstudio_api_key">{{ ui.api_key_optional }}</label>
+                        <input type="password" name="lmstudio_api_key" id="lmstudio_api_key" class="v-input" value="{{ config.lmstudio_api_key }}">
+                    </div>
+                </div>
+            </div>
 
-        <div class="config-group">
-          <h3>Gemini / ASR</h3>
-          <div class="row">
-            <div><label for="gemini_api_key">API key</label><input type="password" name="gemini_api_key" id="gemini_api_key" value="{{ config.gemini_api_key }}"></div>
-            <div><label for="gemini_model">Мадэль</label><input type="text" name="gemini_model" id="gemini_model" value="{{ config.gemini_model }}"></div>
-          </div>
-        </div>
+            <div class="config-group">
+                <h3>Gemini / ASR</h3>
+                <div class="row">
+                    <div class="field">
+                        <label for="gemini_api_key">{{ ui.api_key }}</label>
+                        <input type="password" name="gemini_api_key" id="gemini_api_key" class="v-input" value="{{ config.gemini_api_key }}">
+                    </div>
+                    <div class="field">
+                        <label for="gemini_model">{{ ui.model }}</label>
+                        <input type="text" name="gemini_model" id="gemini_model" class="v-input" value="{{ config.gemini_model }}">
+                    </div>
+                </div>
+            </div>
 
-        <div class="config-group">
-          <h3>OpenAI-сумяшчальны ASR (LMStudio Whisper)</h3>
-          <div class="row">
-            <div><label for="openai_base_url">Base URL</label><input type="text" name="openai_base_url" id="openai_base_url" value="{{ config.openai_base_url }}"></div>
-            <div><label for="openai_model">Whisper-мадэль</label><input type="text" name="openai_model" id="openai_model" value="{{ config.openai_model }}"></div>
-            <div><label for="openai_api_key">API key</label><input type="password" name="openai_api_key" id="openai_api_key" value="{{ config.openai_api_key }}"></div>
-          </div>
+            <div class="config-group">
+                <h3>OpenAI-сумяшчальны ASR (LMStudio Whisper)</h3>
+                <div class="row">
+                    <div class="field">
+                        <label for="openai_base_url">{{ ui.base_url }}</label>
+                        <input type="text" name="openai_base_url" id="openai_base_url" class="v-input" value="{{ config.openai_base_url }}">
+                    </div>
+                    <div class="field">
+                        <label for="openai_model">{{ ui.whisper_model }}</label>
+                        <input type="text" name="openai_model" id="openai_model" class="v-input" value="{{ config.openai_model }}">
+                    </div>
+                    <div class="field">
+                        <label for="openai_api_key">{{ ui.api_key }}</label>
+                        <input type="password" name="openai_api_key" id="openai_api_key" class="v-input" value="{{ config.openai_api_key }}">
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
-    <div class="card" id="tts-section">
-      <h2>3. TTS-пайплайн</h2>
-      <div class="grid cols-2">
-        <div>
-          <label for="normalization_provider">Нармалізацыя</label>
-          <select name="tts_normalization_provider" id="normalization_provider">
-            <option value="none" {% if request.form.get('tts_normalization_provider','none')=='none' %}selected{% endif %}>Няма</option>
-            <option value="simple" {% if request.form.get('tts_normalization_provider','simple')=='simple' %}selected{% endif %}>Simple (лагічныя правілы)</option>
-            <option value="mistral" {% if request.form.get('tts_normalization_provider','')=='mistral' %}selected{% endif %}>Mistral</option>
-            <option value="openrouter" {% if request.form.get('tts_normalization_provider','')=='openrouter' %}selected{% endif %}>OpenRouter</option>
-            <option value="lmstudio" {% if request.form.get('tts_normalization_provider','')=='lmstudio' %}selected{% endif %}>LMStudio</option>
-            <option value="gemini" {% if request.form.get('tts_normalization_provider','')=='gemini' %}selected{% endif %}>Gemini</option>
-          </select>
+    <div class="card section" id="tts-section">
+        <div class="card-header">
+            <div>
+                <div class="card-title">{{ ui.tts_pipeline }}</div>
+                <div class="card-sub">{{ ui.tts_pipeline_sub }}</div>
+            </div>
+            {{ icon('headphones', 22) }}
         </div>
-        <div>
-          <label for="stress_provider">Натцiскі</label>
-          <select name="tts_stress_provider" id="stress_provider">
-            <option value="none" {% if request.form.get('tts_stress_provider','none')=='none' %}selected{% endif %}>Няма</option>
-            <option value="stat" {% if request.form.get('tts_stress_provider','stat')=='stat' %}selected{% endif %}>Stat (слоўнікі)</option>
-            <option value="mistral" {% if request.form.get('tts_stress_provider','')=='mistral' %}selected{% endif %}>Mistral</option>
-            <option value="openrouter" {% if request.form.get('tts_stress_provider','')=='openrouter' %}selected{% endif %}>OpenRouter</option>
-            <option value="lmstudio" {% if request.form.get('tts_stress_provider','')=='lmstudio' %}selected{% endif %}>LMStudio</option>
-            <option value="gemini" {% if request.form.get('tts_stress_provider','')=='gemini' %}selected{% endif %}>Gemini</option>
-          </select>
+        <div class="row">
+            <div class="field">
+                <label for="normalization_provider">{{ ui.normalization }}</label>
+                <select name="tts_normalization_provider" id="normalization_provider" class="v-select">
+                    <option value="none" {% if request.form.get('tts_normalization_provider','none')=='none' %}selected{% endif %}>{{ ui.opt_none }}</option>
+                    <option value="simple" {% if request.form.get('tts_normalization_provider','simple')=='simple' %}selected{% endif %}>{{ ui.opt_simple }}</option>
+                    <option value="mistral" {% if request.form.get('tts_normalization_provider','')=='mistral' %}selected{% endif %}>{{ ui.opt_mistral }}</option>
+                    <option value="openrouter" {% if request.form.get('tts_normalization_provider','')=='openrouter' %}selected{% endif %}>{{ ui.opt_openrouter }}</option>
+                    <option value="lmstudio" {% if request.form.get('tts_normalization_provider','')=='lmstudio' %}selected{% endif %}>{{ ui.opt_lmstudio }}</option>
+                    <option value="gemini" {% if request.form.get('tts_normalization_provider','')=='gemini' %}selected{% endif %}>{{ ui.opt_gemini }}</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="stress_provider">{{ ui.stress }}</label>
+                <select name="tts_stress_provider" id="stress_provider" class="v-select">
+                    <option value="none" {% if request.form.get('tts_stress_provider','none')=='none' %}selected{% endif %}>{{ ui.opt_none }}</option>
+                    <option value="stat" {% if request.form.get('tts_stress_provider','stat')=='stat' %}selected{% endif %}>{{ ui.opt_stat }}</option>
+                    <option value="mistral" {% if request.form.get('tts_stress_provider','')=='mistral' %}selected{% endif %}>{{ ui.opt_mistral }}</option>
+                    <option value="openrouter" {% if request.form.get('tts_stress_provider','')=='openrouter' %}selected{% endif %}>{{ ui.opt_openrouter }}</option>
+                    <option value="lmstudio" {% if request.form.get('tts_stress_provider','')=='lmstudio' %}selected{% endif %}>{{ ui.opt_lmstudio }}</option>
+                    <option value="gemini" {% if request.form.get('tts_stress_provider','')=='gemini' %}selected{% endif %}>{{ ui.opt_gemini }}</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="phonemization_provider">{{ ui.phonemization }}</label>
+                <select name="tts_phonemization_provider" id="phonemization_provider" class="v-select">
+                    <option value="none" {% if request.form.get('tts_phonemization_provider','none')=='none' %}selected{% endif %}>{{ ui.opt_none }}</option>
+                    <option value="belg2p" {% if request.form.get('tts_phonemization_provider','')=='belg2p' %}selected{% endif %}>{{ ui.opt_belg2p }}</option>
+                </select>
+                <div class="hint">{{ ui.hint_phonemization }}</div>
+            </div>
+            <div class="field">
+                <label for="tts_provider">TTS</label>
+                <select name="tts_tts_provider" id="tts_provider" class="v-select">
+                    <option value="coqui" {% if request.form.get('tts_tts_provider','coqui')=='coqui' %}selected{% endif %}>{{ ui.opt_coqui }}</option>
+                    <option value="omnivoice" {% if request.form.get('tts_tts_provider','')=='omnivoice' %}selected{% endif %}>{{ ui.opt_omnivoice }}</option>
+                    <option value="mistral" {% if request.form.get('tts_tts_provider','')=='mistral' %}selected{% endif %}>{{ ui.opt_mistral }}</option>
+                    <option value="openrouter" {% if request.form.get('tts_tts_provider','')=='openrouter' %}selected{% endif %}>{{ ui.opt_openrouter }}</option>
+                </select>
+            </div>
         </div>
-        <div>
-          <label for="phonemization_provider">Фанемізацыя</label>
-          <select name="tts_phonemization_provider" id="phonemization_provider">
-            <option value="none" {% if request.form.get('tts_phonemization_provider','none')=='none' %}selected{% endif %}>Няма</option>
-            <option value="belg2p" {% if request.form.get('tts_phonemization_provider','')=='belg2p' %}selected{% endif %}>BelG2P (Java)</option>
-          </select>
-          <div class="hint">CoquiTTS найлепш працуе з фанемамі.</div>
-        </div>
-        <div>
-          <label for="tts_provider">TTS</label>
-          <select name="tts_tts_provider" id="tts_provider">
-            <option value="coqui" {% if request.form.get('tts_tts_provider','coqui')=='coqui' %}selected{% endif %}>CoquiTTS (лагчаны)</option>
-            <option value="omnivoice" {% if request.form.get('tts_tts_provider','')=='omnivoice' %}selected{% endif %}>OmniVoice (GPU)</option>
-            <option value="mistral" {% if request.form.get('tts_tts_provider','')=='mistral' %}selected{% endif %}>Mistral Voxtral</option>
-            <option value="openrouter" {% if request.form.get('tts_tts_provider','')=='openrouter' %}selected{% endif %}>OpenRouter / Gemini TTS</option>
-          </select>
-        </div>
-      </div>
     </div>
 
     <div class="card section" id="asr-section">
-      <h2>3. Распазнаванне маўлення (ASR)</h2>
-      <div>
-        <label for="asr_provider">Правайдэр ASR</label>
-        <select name="asr_provider" id="asr_provider">
-          <option value="gemini" {% if request.form.get('asr_provider','gemini')=='gemini' %}selected{% endif %}>Gemini</option>
-          <option value="openai" {% if request.form.get('asr_provider','')=='openai' %}selected{% endif %}>OpenAI-сумяшчальны / LMStudio</option>
-        </select>
-      </div>
-      <div style="margin-top:1rem;">
-        <label for="audio_file">Аўдыяфайл</label>
-        <input type="file" name="audio_file" id="audio_file" accept="audio/*">
-      </div>
+        <div class="card-header">
+            <div>
+                <div class="card-title">{{ ui.asr }}</div>
+                <div class="card-sub">{{ ui.asr_provider }}</div>
+            </div>
+            {{ icon('mic', 22) }}
+        </div>
+        <div class="field">
+            <label for="asr_provider">{{ ui.asr_provider }}</label>
+            <select name="asr_provider" id="asr_provider" class="v-select">
+                <option value="gemini" {% if request.form.get('asr_provider','gemini')=='gemini' %}selected{% endif %}>{{ ui.opt_gemini }}</option>
+                <option value="openai" {% if request.form.get('asr_provider','')=='openai' %}selected{% endif %}>{{ ui.opt_openrouter }}</option>
+            </select>
+        </div>
+        <div class="field" style="margin-top: 1rem;">
+            <label for="audio_file">{{ ui.audio_file }}</label>
+            <input type="file" name="audio_file" id="audio_file" class="v-input" accept="audio/*">
+        </div>
     </div>
 
     <div class="card section active" id="text-section">
-      <h2>3. Уваход</h2>
-      <div>
-        <label for="input_text">Тэкст</label>
-        <textarea name="input_text" id="input_text" placeholder="Прывітанне, свет!">{{ request.form.get('input_text','') }}</textarea>
-      </div>
-      <div class="grid cols-2" style="margin-top:1rem;">
-        <div id="normalization-only" class="section">
-          <label for="normalization_provider_single">Нармалізацыя</label>
-          <select name="normalization_provider" id="normalization_provider_single">
-            <option value="simple" {% if request.form.get('normalization_provider','simple')=='simple' %}selected{% endif %}>Simple</option>
-            <option value="mistral" {% if request.form.get('normalization_provider','')=='mistral' %}selected{% endif %}>Mistral</option>
-            <option value="openrouter" {% if request.form.get('normalization_provider','')=='openrouter' %}selected{% endif %}>OpenRouter</option>
-            <option value="lmstudio" {% if request.form.get('normalization_provider','')=='lmstudio' %}selected{% endif %}>LMStudio</option>
-            <option value="gemini" {% if request.form.get('normalization_provider','')=='gemini' %}selected{% endif %}>Gemini</option>
-          </select>
+        <div class="card-header">
+            <div>
+                <div class="card-title">{{ ui.input }}</div>
+                <div class="card-sub">{{ ui.input_sub }}</div>
+            </div>
+            {{ icon('type', 22) }}
         </div>
-        <div id="stress-only" class="section">
-          <label for="stress_provider_single">Натцiскі</label>
-          <select name="stress_provider" id="stress_provider_single">
-            <option value="stat" {% if request.form.get('stress_provider','stat')=='stat' %}selected{% endif %}>Stat</option>
-            <option value="mistral" {% if request.form.get('stress_provider','')=='mistral' %}selected{% endif %}>Mistral</option>
-            <option value="openrouter" {% if request.form.get('stress_provider','')=='openrouter' %}selected{% endif %}>OpenRouter</option>
-            <option value="lmstudio" {% if request.form.get('stress_provider','')=='lmstudio' %}selected{% endif %}>LMStudio</option>
-            <option value="gemini" {% if request.form.get('stress_provider','')=='gemini' %}selected{% endif %}>Gemini</option>
-          </select>
+        <div class="field">
+            <label for="input_text">{{ ui.text }}</label>
+            <textarea name="input_text" id="input_text" class="v-textarea" placeholder="{{ ui.text_placeholder }}">{{ request.form.get('input_text','') }}</textarea>
         </div>
-      </div>
+        <div class="row" style="margin-top: 1rem;">
+            <div class="field section" id="normalization-only">
+                <label for="normalization_provider_single">{{ ui.normalization }}</label>
+                <select name="normalization_provider" id="normalization_provider_single" class="v-select">
+                    <option value="simple" {% if request.form.get('normalization_provider','simple')=='simple' %}selected{% endif %}>{{ ui.opt_simple }}</option>
+                    <option value="mistral" {% if request.form.get('normalization_provider','')=='mistral' %}selected{% endif %}>{{ ui.opt_mistral }}</option>
+                    <option value="openrouter" {% if request.form.get('normalization_provider','')=='openrouter' %}selected{% endif %}>{{ ui.opt_openrouter }}</option>
+                    <option value="lmstudio" {% if request.form.get('normalization_provider','')=='lmstudio' %}selected{% endif %}>{{ ui.opt_lmstudio }}</option>
+                    <option value="gemini" {% if request.form.get('normalization_provider','')=='gemini' %}selected{% endif %}>{{ ui.opt_gemini }}</option>
+                </select>
+            </div>
+            <div class="field section" id="stress-only">
+                <label for="stress_provider_single">{{ ui.stress }}</label>
+                <select name="stress_provider" id="stress_provider_single" class="v-select">
+                    <option value="stat" {% if request.form.get('stress_provider','stat')=='stat' %}selected{% endif %}>{{ ui.opt_stat }}</option>
+                    <option value="mistral" {% if request.form.get('stress_provider','')=='mistral' %}selected{% endif %}>{{ ui.opt_mistral }}</option>
+                    <option value="openrouter" {% if request.form.get('stress_provider','')=='openrouter' %}selected{% endif %}>{{ ui.opt_openrouter }}</option>
+                    <option value="lmstudio" {% if request.form.get('stress_provider','')=='lmstudio' %}selected{% endif %}>{{ ui.opt_lmstudio }}</option>
+                    <option value="gemini" {% if request.form.get('stress_provider','')=='gemini' %}selected{% endif %}>{{ ui.opt_gemini }}</option>
+                </select>
+            </div>
+        </div>
     </div>
 
-    <div class="card">
-      <button type="submit">Запусціць</button>
+    <div class="actions">
+        <button type="submit" class="v-btn">{{ icon('play', 18) }} {{ ui.run }}</button>
     </div>
-  </form>
+</form>
 
-  {% if result %}
-  <div class="result">
-    <h3>Вынік ({{ result.mode }})</h3>
+{% if result %}
+<div class="card result-card">
+    <div class="card-header">
+        <div>
+            <div class="card-title">{{ ui.result }}</div>
+            <div class="card-sub">{{ ui.result_for.format(mode=result.mode) }}</div>
+        </div>
+        {{ icon('check', 22) }}
+    </div>
     {% if result.audio_url %}
-      <audio controls src="{{ result.audio_url }}"></audio>
-      <p class="hint">Файл: {{ result.audio_path }}</p>
+        <audio controls src="{{ result.audio_url }}" class="result-audio"></audio>
+        <p class="file-path">{{ ui.file }}: {{ result.audio_path }}</p>
     {% endif %}
     {% if result.text %}
-      <pre>{{ result.text }}</pre>
+        <pre class="result-pre">{{ result.text }}</pre>
     {% endif %}
     {% if result.steps %}
-      <ul class="steps">
-        {% for name, value in result.steps %}
-          <li><strong>{{ name }}</strong><code>{{ value }}</code></li>
-        {% endfor %}
-      </ul>
+        <ul class="steps">
+            {% for name, value in result.steps %}
+                <li><strong>{{ name }}</strong><code>{{ value }}</code></li>
+            {% endfor %}
+        </ul>
     {% endif %}
-  </div>
-  {% endif %}
 </div>
+{% endif %}
+{% endblock %}
 
+{% block scripts %}
 <script>
-  function showMode(mode) {
-    document.getElementById('tts-section').classList.remove('active');
-    document.getElementById('asr-section').classList.remove('active');
-    document.getElementById('text-section').classList.remove('active');
-    document.getElementById('normalization-only').classList.remove('active');
-    document.getElementById('stress-only').classList.remove('active');
+    function showMode(mode) {
+        document.getElementById('tts-section').classList.remove('active');
+        document.getElementById('asr-section').classList.remove('active');
+        document.getElementById('text-section').classList.remove('active');
+        document.getElementById('normalization-only').classList.remove('active');
+        document.getElementById('stress-only').classList.remove('active');
 
-    if (mode === 'tts') {
-      document.getElementById('tts-section').classList.add('active');
-      document.getElementById('text-section').classList.add('active');
-    } else if (mode === 'asr') {
-      document.getElementById('asr-section').classList.add('active');
-    } else if (['normalization','stress','phonemization'].includes(mode)) {
-      document.getElementById('text-section').classList.add('active');
-      if (mode === 'normalization') document.getElementById('normalization-only').classList.add('active');
-      if (mode === 'stress') document.getElementById('stress-only').classList.add('active');
+        if (mode === 'tts') {
+            document.getElementById('tts-section').classList.add('active');
+            document.getElementById('text-section').classList.add('active');
+        } else if (mode === 'asr') {
+            document.getElementById('asr-section').classList.add('active');
+        } else if (['normalization', 'stress', 'phonemization'].includes(mode)) {
+            document.getElementById('text-section').classList.add('active');
+            if (mode === 'normalization') document.getElementById('normalization-only').classList.add('active');
+            if (mode === 'stress') document.getElementById('stress-only').classList.add('active');
+        }
     }
-  }
 
-  const radios = document.querySelectorAll('input[name="mode"]');
-  radios.forEach(r => r.addEventListener('change', e => showMode(e.target.value)));
-  const checked = document.querySelector('input[name="mode"]:checked');
-  showMode(checked ? checked.value : 'tts');
+    const radios = document.querySelectorAll('input[name="mode"]');
+    radios.forEach(r => r.addEventListener('change', e => showMode(e.target.value)));
+    const checked = document.querySelector('input[name="mode"]:checked');
+    showMode(checked ? checked.value : 'tts');
+
+    document.addEventListener('belvoice:command', function (e) {
+        const action = e.detail;
+        if (!action || !action.startsWith('focus-')) return;
+        const mode = action.replace('focus-', '');
+        const radio = document.querySelector('input[name="mode"][value="' + mode + '"]');
+        if (radio) {
+            radio.checked = true;
+            showMode(mode);
+            radio.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
 </script>
-</body>
-</html>
+{% endblock %}

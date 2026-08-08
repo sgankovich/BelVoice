@@ -8,3 +8,4 @@ target/
 /webui/static/outputs/
 /webui/static/uploads/
 /webui/__pycache__/
+/webui/belvoice_env/
