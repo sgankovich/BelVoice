@@ -9,13 +9,14 @@ description = "Belarusian TTS/ASR framework"
 authors = [{name = "Aleś Bułojčyk", email = "alex73mail@gmail.com"}]
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = ["requests>=2.0", "litellm>=1.80"]
 classifiers = [
     "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)"
 ]
 license = {file = "LICENSE.md"}
 
 [project.optional-dependencies]
+webui = ["flask>=3.0"]
 
 [tool.setuptools.package-data]
 "*" = ["**/*.json", "**/*.wav"]

@@ -1,18 +1,13 @@
-import litellm
-
-litellm.suppress_debug_info = True
-
-from litellm import completion
+from belvoice.llm_client import make_client
 
 
 class NormalizationLLM:
     """
-    See models list on the https://models.litellm.ai/
-    Usually, you need to set LLM's token into some env variable.
-    """
+    Разумная нармалізацыя тэксту праз LLM.
 
-    def __init__(self, model_name: str):
-        self._model_name = model_name
+    Падтрымлівае мадэлі з LiteLLM, у тым ліку `mistral/...`, `openrouter/...`,
+    і лакальныя OpenAI-сумяшчальныя правайдэры (LMStudio) праз `api_base`.
+    """
 
     """
     Prompt, based on the from https://arxiv.org/abs/2511.03080v1
@@ -59,25 +54,14 @@ class NormalizationLLM:
     DO NOT include any extra commentary, greetings, or explanations in your output. Only return the revised text.
     """
 
+    def __init__(self, model_name: str, api_key: str = None, api_base: str = None):
+        self._client = make_client(model_name, api_key=api_key, api_base=api_base)
+
     def normalize(self, text_to_normalize: str) -> str:
         messages = [
             {"role": "system", "content": self.PROMPT},
-
-            # 2. Few-Shot Example 1 (Ensures correct number/currency expansion)
-            # {"role": "user", "content": "The stock is worth $12.50 per share."},
-            # {"role": "assistant", "content": "The stock is worth twelve dollars and fifty cents per share."},
-
-            # 3. Few-Shot Example 2 (Ensures correct time and abbreviation expansion)
-            # {"role": "user", "content": "Dr. Smith's appointment is at 3:30 p.m."},
-            # {"role": "assistant", "content": "Doctor Smith's appointment is at three thirty P M."},
-
-            # 4. Final User Request
             {"role": "user", "content": text_to_normalize}
         ]
 
-        response = completion(
-            model=self._model_name,
-            messages=messages,
-            temperature=0.0  # Use 0.0 for factual/deterministic tasks like normalization
-        )
+        response = self._client.chat(messages, temperature=0.0)
         return response.choices[0].message.content
