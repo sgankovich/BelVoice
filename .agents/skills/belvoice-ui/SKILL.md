@@ -42,5 +42,4 @@ OPENROUTER_API_KEY=secret:session:OPENROUTER_API_KEY
 # Known gotchas
 - The `<textarea>` and text inputs are not reliably cleared by `press_key Backspace`; use `Control+a` followed by `type`, or set the value via `browser console` (`document.getElementById('...').value = '...'`) to avoid appended input.
 - `select_option` updates `selectedIndex` correctly, but the returned HTML snapshot may show stale `selected="true"` attributes. Trust the request/response result, not the snapshot markup, for provider state.
-- After submitting config fields, the form is repopulated from the config loaded at the start of the request, so newly saved values do **not** appear until the next page reload.
-- Filling API keys in the UI writes them to `webui/ui_config.json` and sets `os.environ` for the running Flask process. To switch back to environment-provided keys, restore `ui_config.json` to empty defaults and restart the Flask server.
+- Config values (tokens, models, base URLs) are saved to `webui/ui_config.json` on submit. If you want the UI to fall back to environment-provided keys, leave the corresponding fields empty in the form and submit.
