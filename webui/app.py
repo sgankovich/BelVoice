@@ -4,7 +4,9 @@ import sys
 import uuid
 from pathlib import Path
 
-from flask import Flask, flash, render_template, request, send_from_directory, url_for
+from flask import Flask, flash, make_response, redirect, render_template, request, send_from_directory, url_for
+
+from ui_text import UI_LANGUAGES, get_ui_text
 
 # Дазваляем імпартаваць belvoice з framework/ пры запуску з гэтага файла
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -12,6 +14,22 @@ sys.path.insert(0, str(REPO_ROOT / "framework"))
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "belvoice-webui-dev")
+
+
+@app.context_processor
+def inject_ui():
+    lang = request.cookies.get("ui_language", "be")
+    return {"ui": get_ui_text(lang), "ui_language": lang, "ui_languages": UI_LANGUAGES}
+
+
+@app.route("/set-ui-language", methods=["POST"])
+def set_ui_language():
+    lang = request.form.get("lang", "be")
+    if lang not in [code for code, _ in UI_LANGUAGES]:
+        lang = "be"
+    response = make_response(redirect(request.referrer or url_for("index")))
+    response.set_cookie("ui_language", lang, max_age=60 * 60 * 24 * 365, httponly=True, samesite="Lax")
+    return response
 
 CONFIG_FILE = Path(__file__).resolve().parent / "ui_config.json"
 OUTPUT_DIR = Path(__file__).resolve().parent / "static" / "outputs"
