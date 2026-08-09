@@ -62,7 +62,7 @@ def load_config():
                 saved = json.load(f)
             merged = dict(DEFAULT_CONFIG)
             merged.update(saved)
-            return merged
+            return {k: merged[k] if merged.get(k) != "" else DEFAULT_CONFIG[k] for k in DEFAULT_CONFIG}
         except Exception:
             pass
     return dict(DEFAULT_CONFIG)
@@ -174,8 +174,8 @@ def transcribe(audio_path, provider, config):
 def run_pipeline(params):
     config = load_config()
     for key in DEFAULT_CONFIG:
-        config[key] = params.get(key, DEFAULT_CONFIG[key])
-    save_config(config)
+        if key in params:
+            config[key] = params[key]
 
     mode = params.get("mode", "tts")
 
@@ -199,7 +199,7 @@ def run_pipeline(params):
 
         if stresser != "none":
             current = apply_stress(current, stresser, config)
-            steps.append(("Натцiскі", current))
+            steps.append(("Націскі", current))
 
         if phonemizer != "none":
             current = phonemize_text(current)
@@ -268,9 +268,23 @@ def index():
             error = str(exc)
             app.logger.exception("Памылка апрацоўкі")
 
-    # Перазагружаем канфіг пасля POST, каб форма паказвала захаваныя значэнні
+    return render_template("index.html", result=result, error=error)
+
+
+@app.route("/settings", methods=["GET", "POST"])
+def settings():
+    lang = request.cookies.get("ui_language", "be")
+    ui = get_ui_text(lang)
+    if request.method == "POST":
+        config = load_config()
+        for key in DEFAULT_CONFIG:
+            config[key] = request.form.get(key, config[key])
+        save_config(config)
+        flash(ui["settings_saved"], "info")
+        return redirect(url_for("settings"))
+
     config = load_config()
-    return render_template("index.html", config=config, result=result, error=error)
+    return render_template("settings.html", config=config)
 
 
 if __name__ == "__main__":

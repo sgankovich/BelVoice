@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon %}
+{% set title = 'settings' %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ ui.settings }}</h1>
+    <p>{{ ui.config_providers_sub }}</p>
+</div>
+
+<form method="post" action="{{ url_for('settings') }}" id="settings-form">
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">{{ ui.config_providers }}</div>
+                <div class="card-sub">{{ ui.config_providers_sub }}</div>
+            </div>
+            {{ icon('settings', 22) }}
+        </div>
+        <div class="config-grid">
+            <div class="config-group">
+                <h3>Mistral</h3>
+                <div class="row">
+                    <div class="field">
+                        <label for="mistral_api_key">{{ ui.api_key }}</label>
+                        <input type="password" name="mistral_api_key" id="mistral_api_key" class="v-input" value="{{ config.mistral_api_key }}">
+                    </div>
+                    <div class="field">
+                        <label for="mistral_chat_model">{{ ui.chat_model }}</label>
+                        <input type="text" name="mistral_chat_model" id="mistral_chat_model" class="v-input" value="{{ config.mistral_chat_model }}">
+                    </div>
+                    <div class="field">
+                        <label for="mistral_tts_model">{{ ui.tts_model }}</label>
+                        <input type="text" name="mistral_tts_model" id="mistral_tts_model" class="v-input" value="{{ config.mistral_tts_model }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-group">
+                <h3>OpenRouter</h3>
+                <div class="row">
+                    <div class="field">
+                        <label for="openrouter_api_key">{{ ui.api_key }}</label>
+                        <input type="password" name="openrouter_api_key" id="openrouter_api_key" class="v-input" value="{{ config.openrouter_api_key }}">
+                    </div>
+                    <div class="field">
+                        <label for="openrouter_chat_model">{{ ui.chat_model }}</label>
+                        <input type="text" name="openrouter_chat_model" id="openrouter_chat_model" class="v-input" value="{{ config.openrouter_chat_model }}">
+                    </div>
+                    <div class="field">
+                        <label for="openrouter_tts_model">{{ ui.tts_model }}</label>
+                        <input type="text" name="openrouter_tts_model" id="openrouter_tts_model" class="v-input" value="{{ config.openrouter_tts_model }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-group">
+                <h3>LMStudio</h3>
+                <div class="row">
+                    <div class="field">
+                        <label for="lmstudio_base_url">{{ ui.base_url }}</label>
+                        <input type="text" name="lmstudio_base_url" id="lmstudio_base_url" class="v-input" value="{{ config.lmstudio_base_url }}">
+                    </div>
+                    <div class="field">
+                        <label for="lmstudio_model">{{ ui.model }}</label>
+                        <input type="text" name="lmstudio_model" id="lmstudio_model" class="v-input" value="{{ config.lmstudio_model }}">
+                    </div>
+                    <div class="field">
+                        <label for="lmstudio_api_key">{{ ui.api_key_optional }}</label>
+                        <input type="password" name="lmstudio_api_key" id="lmstudio_api_key" class="v-input" value="{{ config.lmstudio_api_key }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-group">
+                <h3>Gemini / ASR</h3>
+                <div class="row">
+                    <div class="field">
+                        <label for="gemini_api_key">{{ ui.api_key }}</label>
+                        <input type="password" name="gemini_api_key" id="gemini_api_key" class="v-input" value="{{ config.gemini_api_key }}">
+                    </div>
+                    <div class="field">
+                        <label for="gemini_model">{{ ui.model }}</label>
+                        <input type="text" name="gemini_model" id="gemini_model" class="v-input" value="{{ config.gemini_model }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-group">
+                <h3>OpenAI-сумяшчальны ASR (LMStudio Whisper)</h3>
+                <div class="row">
+                    <div class="field">
+                        <label for="openai_base_url">{{ ui.base_url }}</label>
+                        <input type="text" name="openai_base_url" id="openai_base_url" class="v-input" value="{{ config.openai_base_url }}">
+                    </div>
+                    <div class="field">
+                        <label for="openai_model">{{ ui.whisper_model }}</label>
+                        <input type="text" name="openai_model" id="openai_model" class="v-input" value="{{ config.openai_model }}">
+                    </div>
+                    <div class="field">
+                        <label for="openai_api_key">{{ ui.api_key }}</label>
+                        <input type="password" name="openai_api_key" id="openai_api_key" class="v-input" value="{{ config.openai_api_key }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button type="submit" class="v-btn">{{ icon('check', 18) }} {{ ui.save_settings }}</button>
+    </div>
+</form>
+{% endblock %}
