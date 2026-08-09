@@ -34,6 +34,9 @@
             <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
                 {{ icon('layout-dashboard', 20) }} {{ ui.home }}
             </a>
+            <a class="nav-link {% if request.endpoint == 'settings' %}active{% endif %}" href="{{ url_for('settings') }}">
+                {{ icon('settings', 20) }} {{ ui.settings }}
+            </a>
             <a class="nav-link" href="https://github.com/sgankovich/BelVoice" target="_blank" rel="noopener">
                 {{ icon('box', 20) }} GitHub
             </a>
@@ -114,6 +117,7 @@
         { name: {{ ui.command_normalization|tojson }}, icon: 'type', action: 'focus-normalization', shortcut: 'M N' },
         { name: {{ ui.command_stress|tojson }}, icon: 'sparkles', action: 'focus-stress', shortcut: 'M S' },
         { name: {{ ui.command_phonemization|tojson }}, icon: 'zap', action: 'focus-phonemization', shortcut: 'M P' },
+        { name: {{ ui.command_settings|tojson }}, icon: 'settings', href: {{ url_for('settings')|tojson }}, shortcut: 'G S' },
         { name: {{ ui.toggle_day_night|tojson }}, icon: 'moon', action: 'mode', shortcut: 'T M' },
         { name: {{ ui.toggle_modern_simple|tojson }}, icon: 'layout-dashboard', action: 'style', shortcut: 'T S' }
     ];

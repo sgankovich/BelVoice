@@ -12,7 +12,7 @@ _BASE: Dict[str, str] = {
     "brand_sub": "Тэставы UI",
     "menu": "Меню",
     "home": "Галоўная",
-    "home_sub": "Канфігурацыя правайдэраў, рэжымаў і генерацыя голасу / распазнаванне.",
+    "home_sub": "Абярыце рэжым і апрацуйце тэкст або аўдыя.",
     "pipeline": "Пайплайн",
     "settings": "Налады",
     "open_menu": "Адкрыць меню",
@@ -43,6 +43,7 @@ _BASE: Dict[str, str] = {
     "processing": "Апрацоўка",
     "please_wait": "Калі ласка, пачакайце",
     "save_settings": "Захаваць налады",
+    "settings_saved": "Налады захаваны",
     "result": "Вынік",
     "result_for": "Вынік ({mode})",
     "mode": "Рэжым",
@@ -54,7 +55,7 @@ _BASE: Dict[str, str] = {
     "asr": "Распазнаванне маўлення (ASR)",
     "asr_provider": "Правайдэр ASR",
     "normalization": "Нармалізацыя",
-    "stress": "Натцiскі",
+    "stress": "Націскі",
     "phonemization": "Фанемізацыя",
     "input": "Уваход",
     "input_sub": "Увядзіце тэкст або запампуйце аўдыя.",
@@ -86,8 +87,9 @@ _BASE: Dict[str, str] = {
     "command_tts": "Рэжым: TTS-пайплайн",
     "command_asr": "Рэжым: ASR",
     "command_normalization": "Рэжым: Нармалізацыя",
-    "command_stress": "Рэжым: Натцiскі",
+    "command_stress": "Рэжым: Націскі",
     "command_phonemization": "Рэжым: Фанемізацыя",
+    "command_settings": "Налады",
 }
 
 _TRANSLATIONS: Dict[str, Dict[str, str]] = {
@@ -96,7 +98,7 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "brand_sub": "Testing UI",
         "menu": "Menu",
         "home": "Home",
-        "home_sub": "Provider configuration, modes, and speech synthesis / recognition.",
+        "home_sub": "Choose a mode and process text or audio.",
         "pipeline": "Pipeline",
         "settings": "Settings",
         "open_menu": "Open menu",
@@ -127,6 +129,7 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "processing": "Processing",
         "please_wait": "Please wait",
         "save_settings": "Save settings",
+        "settings_saved": "Settings saved",
         "result": "Result",
         "result_for": "Result ({mode})",
         "mode": "Mode",
@@ -172,6 +175,7 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "command_normalization": "Mode: Normalization",
         "command_stress": "Mode: Stress",
         "command_phonemization": "Mode: Phonemization",
+        "command_settings": "Settings",
     },
 }
 
